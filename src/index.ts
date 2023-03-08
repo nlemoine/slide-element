@@ -22,6 +22,7 @@ let SlideController = (
   let closedDisplayValue = "none";
 
   let setDisplay = (value: string) => (element.style.display = value);
+  let setHeight = (value: string) => (element.style.height = value);
   let getHeight = () => element.clientHeight + "px";
   let getComputed = () => window.getComputedStyle(element);
   let setOverflow = (set: boolean) =>
@@ -75,7 +76,10 @@ let SlideController = (
       let currentHeight: string = willOpen ? (getHeight() as string) : "0px";
 
       // Make it visible before we animate it open.
-      if (willOpen) setDisplay(openDisplayValue);
+      if (willOpen) {
+        setHeight('auto');
+        setDisplay(openDisplayValue);
+      }
 
       setOverflow(true);
 
