@@ -275,3 +275,79 @@ describe("callback timing", () => {
     expect(difference).toBeGreaterThanOrEqual(250);
   });
 });
+
+describe("fromHeight option", () => {
+  beforeEach(() => {
+    document.body.innerHTML = `<div data-testid="content" style="height: 200px; display: block;">Content!</div>`;
+  });
+
+  it("opens element from specified height to full height", async () => {
+    const { element } = withMockAnimation(screen.getByTestId("content"));
+    mockHeightOnce(element, [200, 500]);
+
+    const opened = await down(element, { fromHeight: "200px" });
+
+    expect(opened).toBe(true);
+    expect(element.animate).toBeCalledTimes(1);
+    expect(element.animate).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          height: "200px",
+          paddingBottom: "0px",
+          paddingTop: "0px",
+        }),
+        expect.objectContaining({
+          height: "500px",
+          paddingBottom: "",
+          paddingTop: "",
+        }),
+      ],
+      { easing: "ease", duration: 250, fill: "backwards" }
+    );
+  });
+
+  it("closes element from full height to specified fromHeight", async () => {
+    const { element } = withMockAnimation(screen.getByTestId("content"));
+    mockHeight(element, 500);
+
+    const opened = await up(element, { fromHeight: "200px" });
+
+    expect(opened).toBe(false);
+    expect(element.animate).toBeCalledTimes(1);
+    expect(element.animate).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          height: "500px",
+          paddingBottom: "",
+          paddingTop: "",
+        }),
+        expect.objectContaining({
+          height: "200px",
+          paddingBottom: "0px",
+          paddingTop: "0px",
+        }),
+      ],
+      { easing: "ease", duration: 250, fill: "backwards" }
+    );
+  });
+
+  it("does not hide element when closing with non-zero fromHeight", async () => {
+    const { element } = withMockAnimation(screen.getByTestId("content"));
+    mockHeight(element, 500);
+
+    await up(element, { fromHeight: "200px" });
+
+    // Element should remain visible when fromHeight is not "0px"
+    expect(element.style.display).not.toEqual("none");
+  });
+
+  it("hides element when closing with fromHeight of 0px", async () => {
+    const { element } = withMockAnimation(screen.getByTestId("content"));
+    mockHeight(element, 500);
+
+    await up(element, { fromHeight: "0px" });
+
+    // Element should be hidden when fromHeight is "0px"
+    expect(element.style.display).toEqual("none");
+  });
+});

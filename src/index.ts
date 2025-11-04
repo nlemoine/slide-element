@@ -9,9 +9,10 @@ let defaultOptions: Partial<Options> = {
   fill: "backwards",
   display: "block",
   overflow: "hidden",
+  fromHeight: "0px",
 };
 
-let nonAnimatableOptions = ["overflow", "display"];
+let nonAnimatableOptions = ["overflow", "display", "fromHeight"];
 
 let SlideController = (
   element: HTMLElement,
@@ -20,6 +21,7 @@ let SlideController = (
   let mergedOptions: Options = Object.assign({}, defaultOptions, options);
   let openDisplayValue = mergedOptions.display as string;
   let closedDisplayValue = "none";
+  let fromHeightValue = mergedOptions.fromHeight as string;
 
   let setDisplay = (value: string) => (element.style.display = value);
   let getHeight = () => element.clientHeight + "px";
@@ -31,7 +33,12 @@ let SlideController = (
   let createAnimation = (willOpen: boolean, lowerBound): Animation => {
     nonAnimatableOptions.forEach((property) => delete mergedOptions[property]);
 
+    // Temporarily remove height constraint to measure natural height
+    let originalHeight = element.style.height;
+    element.style.height = "";
     let currentHeight = getHeight();
+    element.style.height = originalHeight;
+
     let frames = [currentHeight, lowerBound].map((height) => ({
       height,
       paddingTop: "0px",
@@ -72,10 +79,12 @@ let SlideController = (
       // If we're opening the element, determine the starting point in case this is
       // happening in the middle of a previous animation that was aborted. For this reason,
       // the "lower bound" height will not necessarily be zero.
-      let currentHeight: string = willOpen ? (getHeight() as string) : "0px";
+      let currentHeight: string = willOpen ? (getHeight() as string) : fromHeightValue;
 
-      // Make it visible before we animate it open.
-      if (willOpen) setDisplay(openDisplayValue);
+      // Make it visible before we animate it open (only if it's currently hidden).
+      if (willOpen && getComputed().display === closedDisplayValue) {
+        setDisplay(openDisplayValue);
+      }
 
       setOverflow(true);
 
@@ -83,7 +92,9 @@ let SlideController = (
 
       setOverflow(false);
 
-      if (!willOpen) setDisplay(closedDisplayValue);
+      if (!willOpen && fromHeightValue === "0px") {
+        setDisplay(closedDisplayValue);
+      }
 
       resolve();
     });

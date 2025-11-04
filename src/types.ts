@@ -3,6 +3,7 @@ export type Options = KeyframeAnimationOptions & {
   easing?: string;
   display?: string;
   overflow?: string;
+  fromHeight?: string;
 };
 
 export type SlideMethods = {
