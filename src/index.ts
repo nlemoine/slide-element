@@ -108,7 +108,7 @@ let SlideController = (
     let existingAnimationId = getAnimations()[0]?.id;
     let condition = existingAnimationId
       ? existingAnimationId === "1" // Element is currently opening.
-      : element.offsetHeight;
+      : element.offsetHeight > parseInt(fromHeightValue);
 
     return (condition ? up : down)();
   };
