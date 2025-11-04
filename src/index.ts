@@ -30,7 +30,7 @@ let SlideController = (
     (element.style.overflow = set ? mergedOptions.overflow : "");
   let getAnimations = () => element.getAnimations();
 
-  let createAnimation = (willOpen: boolean, lowerBound): Animation => {
+  let createAnimation = (willOpen: boolean, lowerBound: string): Animation => {
     nonAnimatableOptions.forEach((property) => delete mergedOptions[property]);
 
     // Temporarily remove height constraint to measure natural height

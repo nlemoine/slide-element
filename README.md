@@ -169,7 +169,7 @@ up(document.getElementById("element"), {
 
 **Important notes:**
 - When `fromHeight` is set to a value other than `"0px"`, the element will **not** be hidden (set to `display: none`) when closed. It will remain visible at the `fromHeight`.
-- For this feature to work properly when opening an element, ensure the element does not have a fixed CSS `height` property set, or temporarily remove it before calling `down()`.
+- The library will temporarily remove inline `height` styles to measure the element's natural height during animation. If your element has height constraints from CSS classes or external stylesheets, you may need to manage these before calling `down()` to ensure proper animation.
 
 ## Usage w/o a Bundler
 
