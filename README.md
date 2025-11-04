@@ -148,6 +148,29 @@ down(document.getElementById("element"), {
 });
 ```
 
+### Sliding From/To a Specific Height
+
+By default, `slide-element` slides elements from/to `0px` height (fully collapsed). However, you may want to slide from a specific height instead - for example, in a "read more" scenario where content is initially clipped at a certain height.
+
+Use the `fromHeight` option to specify the collapsed height:
+
+```javascript
+// Element starts at 200px height
+// This will animate from 200px to full natural height
+down(document.getElementById("element"), {
+  fromHeight: "200px"
+});
+
+// This will animate from full height back to 200px
+up(document.getElementById("element"), {
+  fromHeight: "200px"
+});
+```
+
+**Important notes:**
+- When `fromHeight` is set to a value other than `"0px"`, the element will **not** be hidden (set to `display: none`) when closed. It will remain visible at the `fromHeight`.
+- For this feature to work properly when opening an element, ensure the element does not have a fixed CSS `height` property set, or temporarily remove it before calling `down()`.
+
 ## Usage w/o a Bundler
 
 If you'd like to use `slide-element` directly in the browser via CDN, simply load the code, and then reference the function you'd like to use on the global `SlideElement` object:
